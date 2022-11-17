@@ -10,37 +10,44 @@ def energy(kx,ky):
     return sorted(np.linalg.eigvals(A))
 
 first_brillouin_zone_x,first_brillouin_zone_y = np.linspace(-np.pi,np.pi,step_numbers),np.linspace(-np.pi,np.pi,step_numbers)
-epsilon1,epsilon2,epsilon3 = [],[],[]
+epsilon = [[] for i in range(9)]
+
 
 i = 0
-for kx in first_brillouin_zone_x:
-    epsilon1.append([])
-    epsilon2.append([])
-    epsilon3.append([])
-    for ky in first_brillouin_zone_y:
-        epsilon1[i].append(energy(kx,ky)[0])
-        epsilon2[i].append(energy(kx,ky)[1])
-        epsilon3[i].append(energy(kx,ky)[2])
-    i+=1
+for a in epsilon:
+    j = 0
+    for kx in first_brillouin_zone_x:
+        a.append([])
+        for ky in first_brillouin_zone_y:
+            a[j].append(energy(kx,ky)[i])
+        j+=1
+    i+= 1
 
-#plot
+
+# 3Dplot
 figure = plt.figure(figsize=(10,8))
 axe = plt.axes(projection='3d')
-axe.contour3D(first_brillouin_zone_x,first_brillouin_zone_y,epsilon1,100,cmap='binary')
-axe.contour3D(first_brillouin_zone_x,first_brillouin_zone_y,epsilon2,100,cmap='binary')
-axe.contour3D(first_brillouin_zone_x,first_brillouin_zone_y,epsilon3,100,cmap='binary')
+for a in epsilon:
+    axe.contour3D(first_brillouin_zone_x,first_brillouin_zone_y,a,100,cmap='binary')
 axe.set_xlabel('kx')
 axe.set_ylabel('ky')
 axe.set_zlabel('energy');
 plt.show()
 
-figure = plt.figure(figsize=(10,8))
-axe = figure.gca()
-cf = axe.contourf(first_brillouin_zone_x,first_brillouin_zone_y,epsilon3,levels=100,cmap='jet')
+
+ # contour plot
+ figure,axes = plt.subplots(3,3,figsize=(14,8.5))
+ axes = axes.flatten()
+
+ i = 0
+ for axe in axes:
+     cf = axe.contourf(first_brillouin_zone_x,first_brillouin_zone_y,epsilon[i],levels
+             =100,cmap='jet')
+     figure.colorbar(cf)
+     i+=1
+
 axe.set_xlabel('kx')
 axe.set_ylabel('ky')
-clb = figure.colorbar(cf)
-clb.set_label("energy")
 plt.show()
 
 
